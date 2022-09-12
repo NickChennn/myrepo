@@ -81,7 +81,7 @@ params:
   tiles:
     enable: yes
     showcase:
-      - image: pic01.jpg
+      - image: LBS.jpg
         subtitle: Ipsum Dolor Sit Amet
         title: Assignment 1
         url: blogs/aliquam
@@ -93,7 +93,7 @@ params:
         subtitle: Lorem Etiam Nullam
         title: Magna
         url: blogs/magna
-      - image: LBS.jpg
+      - image: pic04.jpg
         subtitle: Nisl Sed Aliquam
         title: Ipsum
         url: blogs/ipsum
