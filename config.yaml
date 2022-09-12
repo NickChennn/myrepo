@@ -11,7 +11,7 @@ params:
       # A RESPONSIVE SITE TEMPLATE DESIGNED BY HTML5 UP
       # AND RELEASED UNDER THE CREATIVE COMMONS.
     title: Hi, my name is Nick
-  blog: {}
+  assignments: {}
   contact:
     address:
       - city: London, W2 1DB
@@ -62,17 +62,17 @@ params:
   navigation:
     button1:
       - name: Get Started
-        url: blogs
+        url: assignments
     button2:
       - name: Log In
         url: '#'
     links:
       - name: Home
         url: '#'
-      - name: Blogs
-        url: blogs
+      - name: Assignments
+        url: assignments
       - name: Activities
-        url: blogs/ipsum
+        url: assignments/ipsum
       - name: Contact
         url: elements.html
     menu: Menu
@@ -84,27 +84,27 @@ params:
       - image: pic01.jpg
         subtitle: Ipsum Dolor Sit Amet
         title: Aliquam
-        url: blogs/aliquam
+        url: assignments/aliquam
       - image: pic02.jpg
         subtitle: Feugiat Amet Tempus
         title: Tempus
-        url: blogs/tempus
+        url: assignments/tempus
       - image: pic03.jpg
         subtitle: Lorem Etiam Nullam
         title: Magna
-        url: blogs/magna
+        url: assignments/magna
       - image: pic04.jpg
         subtitle: Nisl Sed Aliquam
         title: Ipsum
-        url: blogs/ipsum
+        url: assignments/ipsum
       - image: pic05.jpg
         subtitle: Ipsum Dolor Sit Amet
         title: Consequat
-        url: blogs/ipsum
+        url: assignments/ipsum
       - image: pic06.jpg
         subtitle: Feugiat Amet Tempus
         title: Etiam
-        url: blogs/ipsum
+        url: assignments/ipsum
   two:
     buttonText: Get Started
     enable: yes
@@ -115,4 +115,4 @@ params:
       Vivamus et sagittis libero.\n    Mauris aliquet magna magna sed nunc rhoncus
       amet pharetra et feugiat tempus."
     title: Massa libero
-    url: blogs
+    url: assignments
