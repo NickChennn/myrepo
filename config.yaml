@@ -87,11 +87,11 @@ params:
         url: blogs/aliquam
       - image: pic02.jpg
         subtitle: Feugiat Amet Tempus
-        title: Tempus
+        title: Assignment 2
         url: blogs/tempus
       - image: pic03.jpg
         subtitle: Lorem Etiam Nullam
-        title: Magna
+        title: Assignment 3
         url: blogs/magna
       - image: pic04.jpg
         subtitle: Nisl Sed Aliquam
