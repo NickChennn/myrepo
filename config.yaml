@@ -84,7 +84,7 @@ params:
       - image: LBS.jpg
         subtitle: Ipsum Dolor Sit Amet
         title: Assignment 1
-        url: blogs/aliquam
+        url: blogs/assignment1
       - image: pic02.jpg
         subtitle: Feugiat Amet Tempus
         title: Assignment 2
