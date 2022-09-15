@@ -71,8 +71,8 @@ params:
         url: '#'
       - name: Assignments
         url: blogs
-      - name: Biography
-        url: blogs/ipsum
+      - name: CV
+        url: blogs/CV
       - name: Contact
         url: elements.html
     menu: Menu
