@@ -6,11 +6,10 @@ googleAnalytics: ''
 disqusShortname: ''
 params:
   banner:
-    buttonText: Get Started
+    buttonText: More about me
     subtitle: |-
-      # A RESPONSIVE SITE TEMPLATE DESIGNED BY HTML5 UP
-      # AND RELEASED UNDER THE CREATIVE COMMONS.
-    title: Hi, my name is Nick Chen
+      Postgraduate student studying Masters in Analytics and Management at London Business School
+    title: Welcome to Nick Chen's Personal Website
   blog: {}
   contact:
     address:
@@ -61,20 +60,20 @@ params:
   name: Nick Chen
   navigation:
     button1:
-      - name: Get Started
-        url: blogs
-    button2:
-      - name: Log In
-        url: '#'
-    links:
       - name: Home
         url: '#'
-      - name: Assignments
+ #   button2:
+  #    - name: Log In
+   #     url: '#'
+    links:
+  #    - name: Home
+   #     url: '#'
+      - name: Activities
         url: blogs
       - name: CV
-        url: blogs/CV
-      - name: Contact
-        url: elements.html
+        url: blogs/cv
+      - name: Personal Life
+        url: blogs/personal_life
     menu: Menu
     subtitle: By HTML5 Up
     title: Forty
@@ -88,15 +87,15 @@ params:
       - image: pic02.jpg
         subtitle: Feugiat Amet Tempus
         title: CV
-        url: blogs/CV
+        url: blogs/cv
       - image: pic03.jpg
         subtitle: Lorem Etiam Nullam
         title: Assignment 2
         url: blogs/assignment2
-      - image: pic04.jpg
-        subtitle: Nisl Sed Aliquam
-        title: Assignment 3
-        url: blogs/assignment3
+    #  - image: pic04.jpg
+    #    subtitle: Nisl Sed Aliquam
+    #    title: Personal Life
+    #    url: blogs/personal_life
     #  - image: pic05.jpg
      #   subtitle: Ipsum Dolor Sit Amet
      #   title: Consequat
@@ -106,13 +105,8 @@ params:
      #   title: Etiam
       #  url: blogs/ipsum
   two:
-    buttonText: Get Started
+    buttonText: More about me
     enable: yes
-    subtitle: "Nullam et orci eu lorem consequat tincidunt vivamus et sagittis libero.
-      \n    Mauris aliquet magna magna sed nunc rhoncus pharetra. \n    Pellentesque
-      condimentum sem. In efficitur ligula tate urna. Maecenas laoreet massa vel lacinia
-      pellentesque lorem ipsum dolor. \n    Nullam et orci eu lorem consequat tincidunt.
-      Vivamus et sagittis libero.\n    Mauris aliquet magna magna sed nunc rhoncus
-      amet pharetra et feugiat tempus."
-    title: Massa libero
-    url: blogs
+    subtitle: "Thank you for spending time on knowing the academic side of me. Apart from being a financial enthusiast and a data analyst, I am also a person who enjoys every melody in my life."
+    title: Personal Life
+    url: blogs/personal_life
