@@ -14,11 +14,225 @@ title: Assignment 1
 
 
 
-<div id="challenge-1-excess-rentals-in-tfl-bike-sharing" class="section level1">
-<h1>Challenge 1: Excess rentals in TfL bike sharing</h1>
-<div id="the-challenge-i-want-you-to-work-on-is-to-reproduce-the-following-graph" class="section level2">
-<h2>The challenge I want you to work on is to reproduce the following graph:</h2>
-<p><img src="../../images/tfl_monthly.png" width="100%" style="display: block; margin: auto;" /></p>
+<div id="summary-and-preview-of-the-dataset" class="section level2">
+<h2>1. Summary and preview of the dataset</h2>
+<pre class="r"><code>url &lt;- &quot;https://data.london.gov.uk/download/number-bicycle-hires/ac29363e-e0cb-47cc-a97a-e216d900a6b0/tfl-daily-cycle-hires.xlsx&quot;
+
+# Download TFL data to temporary file
+httr::GET(url, write_disk(bike.temp &lt;- tempfile(fileext = &quot;.xlsx&quot;)))</code></pre>
+<pre><code>## Response [https://airdrive-secure.s3-eu-west-1.amazonaws.com/london/dataset/number-bicycle-hires/2022-09-06T12%3A41%3A48/tfl-daily-cycle-hires.xlsx?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAJJDIMAIVZJDICKHA%2F20220915%2Feu-west-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20220915T093323Z&amp;X-Amz-Expires=300&amp;X-Amz-Signature=cc365f0b7c63fbb3c569555241c889e93dc934693bd61c55a9c211c71afcc438&amp;X-Amz-SignedHeaders=host]
+##   Date: 2022-09-15 09:33
+##   Status: 200
+##   Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+##   Size: 180 kB
+## &lt;ON DISK&gt;  /var/folders/6g/_mjhz_m510n4cb504ffpwxh00000gn/T//RtmpEx08Mz/filee726baa1e6f.xlsx</code></pre>
+<pre class="r"><code># Use read_excel to read it as dataframe
+bike0 &lt;- read_excel(bike.temp,
+                   sheet = &quot;Data&quot;,
+                   range = cell_cols(&quot;A:B&quot;))
+
+# change dates to get year, month, and week
+bike &lt;- bike0 %&gt;% 
+  clean_names() %&gt;% 
+  rename (bikes_hired = number_of_bicycle_hires) %&gt;% 
+  mutate (year = year(day),
+          month = lubridate::month(day, label = TRUE),
+          week = isoweek(day))
+
+skim(bike)</code></pre>
+<table>
+<caption>(#tab:get_tfl_data)Data summary</caption>
+<tbody>
+<tr class="odd">
+<td align="left">Name</td>
+<td align="left">bike</td>
+</tr>
+<tr class="even">
+<td align="left">Number of rows</td>
+<td align="left">4416</td>
+</tr>
+<tr class="odd">
+<td align="left">Number of columns</td>
+<td align="left">5</td>
+</tr>
+<tr class="even">
+<td align="left">_______________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Column type frequency:</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">factor</td>
+<td align="left">1</td>
+</tr>
+<tr class="odd">
+<td align="left">numeric</td>
+<td align="left">3</td>
+</tr>
+<tr class="even">
+<td align="left">POSIXct</td>
+<td align="left">1</td>
+</tr>
+<tr class="odd">
+<td align="left">________________________</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">Group variables</td>
+<td align="left">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: factor</strong></p>
+<table>
+<colgroup>
+<col width="14%" />
+<col width="10%" />
+<col width="14%" />
+<col width="8%" />
+<col width="9%" />
+<col width="41%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="left">ordered</th>
+<th align="right">n_unique</th>
+<th align="left">top_counts</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">month</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="left">TRUE</td>
+<td align="right">12</td>
+<td align="left">Aug: 403, Jul: 374, Jan: 372, Mar: 372</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table style="width:100%;">
+<colgroup>
+<col width="15%" />
+<col width="11%" />
+<col width="15%" />
+<col width="8%" />
+<col width="8%" />
+<col width="5%" />
+<col width="6%" />
+<col width="6%" />
+<col width="6%" />
+<col width="6%" />
+<col width="6%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">mean</th>
+<th align="right">sd</th>
+<th align="right">p0</th>
+<th align="right">p25</th>
+<th align="right">p50</th>
+<th align="right">p75</th>
+<th align="right">p100</th>
+<th align="left">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">bikes_hired</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">26844.3</td>
+<td align="right">9899.73</td>
+<td align="right">2764</td>
+<td align="right">19698</td>
+<td align="right">26607</td>
+<td align="right">34206</td>
+<td align="right">73094</td>
+<td align="left">▃▇▅▁▁</td>
+</tr>
+<tr class="even">
+<td align="left">year</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">2016.1</td>
+<td align="right">3.51</td>
+<td align="right">2010</td>
+<td align="right">2013</td>
+<td align="right">2016</td>
+<td align="right">2019</td>
+<td align="right">2022</td>
+<td align="left">▆▅▇▅▇</td>
+</tr>
+<tr class="odd">
+<td align="left">week</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">26.6</td>
+<td align="right">15.01</td>
+<td align="right">1</td>
+<td align="right">14</td>
+<td align="right">27</td>
+<td align="right">40</td>
+<td align="right">53</td>
+<td align="left">▇▇▇▇▇</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: POSIXct</strong></p>
+<table>
+<colgroup>
+<col width="15%" />
+<col width="11%" />
+<col width="15%" />
+<col width="12%" />
+<col width="12%" />
+<col width="22%" />
+<col width="10%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="left">min</th>
+<th align="left">max</th>
+<th align="left">median</th>
+<th align="right">n_unique</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">day</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="left">2010-07-30</td>
+<td align="left">2022-08-31</td>
+<td align="left">2016-08-14 12:00:00</td>
+<td align="right">4416</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>glimpse(bike)</code></pre>
+<pre><code>## Rows: 4,416
+## Columns: 5
+## $ day         &lt;dttm&gt; 2010-07-30, 2010-07-31, 2010-08-01, 2010-08-02, 2010-08-0…
+## $ bikes_hired &lt;dbl&gt; 6897, 5564, 4303, 6642, 7966, 7893, 8724, 9797, 6631, 7864…
+## $ year        &lt;dbl&gt; 2010, 2010, 2010, 2010, 2010, 2010, 2010, 2010, 2010, 2010…
+## $ month       &lt;ord&gt; Jul, Jul, Aug, Aug, Aug, Aug, Aug, Aug, Aug, Aug, Aug, Aug…
+## $ week        &lt;dbl&gt; 30, 30, 30, 31, 31, 31, 31, 31, 31, 31, 32, 32, 32, 32, 32…</code></pre>
+</div>
+<div id="comparison-of-the-actual-number-of-bike-rentals-per-month-between-2017-2022-to-the-expected-number-of-bike-rentals-per-month-between-2016-2019" class="section level2">
+<h2>2. Comparison of the actual number of bike rentals per month between 2017-2022 to the expected number of bike rentals per month between 2016-2019</h2>
 <pre class="r"><code># generate expected bike hired value for each month
 bike_expected_month&lt;-bike %&gt;% 
   filter(year&gt;= 2016 &amp; year &lt;= 2019) %&gt;% 
@@ -56,9 +270,8 @@ and caculated between 2016-2019&quot;,
     theme(text = element_text(size = 7))</code></pre>
 <p><img src="/blogs/assignment1_files/figure-html/tfl_absolute_monthly_change_self-1.png" width="100%" style="display: block; margin: auto;" /></p>
 </div>
-<div id="the-second-one-looks-at-percentage-changes-from-the-expected-level-of-weekly-rentals." class="section level2">
-<h2>The second one looks at percentage changes from the expected level of weekly rentals.</h2>
-<p><img src="../../images/tfl_weekly.png" width="100%" style="display: block; margin: auto;" /></p>
+<div id="percentage-changes-between-the-actual-number-of-bike-rentals-per-week-between-2017-2022-and-the-expected-number-of-bike-rentals-per-week-between-2016-2019" class="section level2">
+<h2>3. Percentage changes between the actual number of bike rentals per week between 2017-2022 and the expected number of bike rentals per week between 2016-2019</h2>
 <pre class="r"><code># generate expected bike hired value for each week
 bike_expected_week&lt;-bike %&gt;% 
   filter(year&gt;=2016 &amp; year&lt;=2019) %&gt;% 
@@ -102,9 +315,8 @@ calculated between 2016-2019&quot;,
     theme_minimal()+
     theme(text = element_text(size = 7))</code></pre>
 <p><img src="/blogs/assignment1_files/figure-html/tfl_percent_change_self-1.png" width="100%" style="display: block; margin: auto;" /></p>
-<p>Should you use the mean or the median to calculate your expected rentals? Why?</p>
-<p><strong>Answer:</strong><br />
-</p>
-<p>Normally, a mean is used as expected values and in this case, expected rentals. This applies to the cases where the distribution is not extremely unsymmetrical. From the diagrams above, we can see that the distributions are generally symmetrical. If there are cases where the distributions are extremely skewed and have clear outliers, median would be preferred as the value is less distorted.***</p>
 </div>
+<div id="why-use-mean-instead-of-median-to-calculate-expected-rental" class="section level2">
+<h2>4. Why use mean instead of median to calculate expected rental?</h2>
+<p>Normally, a mean is used as expected values and in this case, expected rentals. This applies to the cases where the distribution is not extremely unsymmetrical. From the diagrams above, we can see that the distributions are generally symmetrical. If there are cases where the distributions are extremely skewed and have clear outliers, median would be preferred as the value is less distorted.</p>
 </div>

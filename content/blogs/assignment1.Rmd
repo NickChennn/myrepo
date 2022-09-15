@@ -54,9 +54,9 @@ library(gifski)
 library(png)
 ```
 
-# Challenge 1: Excess rentals in TfL bike sharing
+## 1. Summary and preview of the dataset
 
-```{r get_tfl_data, cache=TRUE, include=FALSE}
+```{r get_tfl_data, cache=TRUE}
 url <- "https://data.london.gov.uk/download/number-bicycle-hires/ac29363e-e0cb-47cc-a97a-e216d900a6b0/tfl-daily-cycle-hires.xlsx"
 
 # Download TFL data to temporary file
@@ -74,13 +74,12 @@ bike <- bike0 %>%
   mutate (year = year(day),
           month = lubridate::month(day, label = TRUE),
           week = isoweek(day))
+
+skim(bike)
+glimpse(bike)
 ```
 
-## The challenge I want you to work on is to reproduce the following graph:
-
-```{r tfl_absolute_monthly_change, echo=FALSE, out.width="100%"}
-knitr::include_graphics(here::here("images", "tfl_monthly.png"), error = FALSE)
-```
+## 2. Comparison of the actual number of bike rentals per month between 2017-2022 to the expected number of bike rentals per month between 2016-2019
 
 ```{r tfl_absolute_monthly_change_self, out.width="100%", fig.height=4.5}
 
@@ -122,11 +121,7 @@ and caculated between 2016-2019",
 
 ```
 
-## The second one looks at percentage changes from the expected level of weekly rentals.
-
-```{r tfl_percent_change, echo=FALSE, out.width="100%"}
-knitr::include_graphics(here::here("images", "tfl_weekly.png"), error = FALSE)
-```
+## 3. Percentage changes between the actual number of bike rentals per week between 2017-2022 and the expected number of bike rentals per week between 2016-2019
 
 ```{r tfl_percent_change_self, out.width="100%", fig.height=4.5}
 
@@ -175,8 +170,6 @@ calculated between 2016-2019",
 
 ```
 
-Should you use the mean or the median to calculate your expected rentals? Why?
+## 4. Why use mean instead of median to calculate expected rental?
 
-**Answer:**\
-
-Normally, a mean is used as expected values and in this case, expected rentals. This applies to the cases where the distribution is not extremely unsymmetrical. From the diagrams above, we can see that the distributions are generally symmetrical. If there are cases where the distributions are extremely skewed and have clear outliers, median would be preferred as the value is less distorted.\*\*\*
+Normally, a mean is used as expected values and in this case, expected rentals. This applies to the cases where the distribution is not extremely unsymmetrical. From the diagrams above, we can see that the distributions are generally symmetrical. If there are cases where the distributions are extremely skewed and have clear outliers, median would be preferred as the value is less distorted.
