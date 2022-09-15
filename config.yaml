@@ -82,7 +82,7 @@ params:
     showcase:
       - image: LBS.jpg
         subtitle: Ipsum Dolor Sit Amet
-        title: Project using R: Excess rentals in Transport for London bike sharing
+        title: Excess rentals in Transport for London bike sharing
         url: blogs/assignment1
       - image: pic02.jpg
         subtitle: Feugiat Amet Tempus
