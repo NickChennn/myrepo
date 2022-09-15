@@ -9,7 +9,7 @@ image: spices.jpg # save picture in \static\img\blogs. Acceptable formats= jpg, 
 
 keywords: ""
 slug: assignment1 # slug is the shorthand URL address... no spaces plz
-title: Assignment 1
+title: Project using R - Excess rentals in Transport for London bike sharing
 ---
 
 ```{r, setup, include=FALSE}
