@@ -11,11 +11,8 @@ keywords: ""
 slug: assignment1 # slug is the shorthand URL address... no spaces plz
 title: Assignment 1
 ---
-  
 
-
-
-```{r, setup, echo=FALSE}
+```{r, setup, include=FALSE}
 knitr::opts_chunk$set(
   message = FALSE, 
   warning = FALSE, 
@@ -31,161 +28,155 @@ knitr::opts_chunk$set(
 )
 ```
 
-
-```{r load-libraries, warning=FALSE, message=FALSE, echo=FALSE}
+```{r load-libraries, include=FALSE}
 library(tidyverse)  # Load ggplot2, dplyr, and all the other tidyverse packages
+library(mosaic)
+library(ggthemes)
 library(lubridate)
 library(here)
 library(skimr)
 library(janitor)
+library(httr)
+library(readxl)
 library(vroom)
-library(tidyquant)
-library(rvest)    # scrape websites
-library(purrr)  
-library(lubridate) #to handle dates
-library(ggrepel)
+library(wbstats)
+library(countrycode)
+library(patchwork)
+library(gganimate)
+library(infer)
+library(lubridate)
+library(knitr)
+library(mosaic)
+library(stats)
+library(corrr)
+library(gganimate)
+library(gifski)
+library(png)
 ```
 
+# Challenge 1: Excess rentals in TfL bike sharing
 
-# Returns of financial stocks
+```{r get_tfl_data, cache=TRUE, include=FALSE}
+url <- "https://data.london.gov.uk/download/number-bicycle-hires/ac29363e-e0cb-47cc-a97a-e216d900a6b0/tfl-daily-cycle-hires.xlsx"
 
-Next, let's choose the [Dow Jones Industrial Average (DJIA)](https://en.wikipedia.org/wiki/Dow_Jones_Industrial_Average) stocks and their ticker symbols and download some data. Besides the thirty stocks that make up the DJIA, we will also add `SPY` which is an SP500 ETF (Exchange Traded Fund).
+# Download TFL data to temporary file
+httr::GET(url, write_disk(bike.temp <- tempfile(fileext = ".xlsx")))
 
-We will use the `rvest` package to scrape the Wikipedia page for the constituents of DJIA
+# Use read_excel to read it as dataframe
+bike0 <- read_excel(bike.temp,
+                   sheet = "Data",
+                   range = cell_cols("A:B"))
 
-```{r, tickers_from_wikipedia}
-
-djia_url <- "https://en.wikipedia.org/wiki/Dow_Jones_Industrial_Average"
-
-
-#get tables that exist on URL
-tables <- djia_url %>% 
-  read_html() %>% 
-  html_nodes(css="table")
-
-
-# parse HTML tables into a dataframe called djia. 
-# Use purr::map() to create a list of all tables in URL
-djia <- map(tables, . %>% 
-               html_table(fill=TRUE)%>% 
-               clean_names())
-
-
-# constituents
-table1 <- djia[[2]] %>% # the second table on the page contains the ticker symbols
-  mutate(date_added = ymd(date_added),
-         
-         # if a stock is listed on NYSE, its symbol is, e.g., NYSE: MMM
-         # We will get prices from yahoo finance which requires just the ticker
-         
-         # if symbol contains "NYSE*", the * being a wildcard
-         # then we jsut drop the first 6 characters in that string
-         ticker = ifelse(str_detect(symbol, "NYSE*"),
-                          str_sub(symbol,7,11),
-                          symbol)
-         )
-
-# we need a vector of strings with just the 30 tickers + SPY  + VIX
-tickers <- table1 %>% 
-  select(ticker) %>% 
-  pull() %>% # pull() gets them as a sting of characters
-  c("SPY", "^VIX") # and lets us add SPY, the SP500 ETF, and the VIX index
-
+# change dates to get year, month, and week
+bike <- bike0 %>% 
+  clean_names() %>% 
+  rename (bikes_hired = number_of_bicycle_hires) %>% 
+  mutate (year = year(day),
+          month = lubridate::month(day, label = TRUE),
+          week = isoweek(day))
 ```
 
+## The challenge I want you to work on is to reproduce the following graph:
 
-
-
-```{r get_price_data, message=FALSE, warning=FALSE, cache=TRUE}
-# Notice the cache=TRUE argument in the chunk options. Because getting data is time consuming, # cache=TRUE means that once it downloads data, the chunk will not run again next time you knit your Rmd
-
-myStocks <- tickers %>% 
-  tq_get(get  = "stock.prices",
-         from = "2000-01-01") %>%
-  group_by(symbol) 
-
-glimpse(myStocks) # examine the structure of the resulting data frame
+```{r tfl_absolute_monthly_change, echo=FALSE, out.width="100%"}
+knitr::include_graphics(here::here("images", "tfl_monthly.png"), error = FALSE)
 ```
 
-Financial performance analysis depend on returns; If I buy a stock today for 100 and I sell it tomorrow for 101.75, my one-day return, assuming no transaction costs, is 1.75%. So given the adjusted closing prices, our first step is to calculate daily and monthly returns.
+```{r tfl_absolute_monthly_change_self, out.width="100%", fig.height=4.5}
 
+# generate expected bike hired value for each month
+bike_expected_month<-bike %>% 
+  filter(year>= 2016 & year <= 2019) %>% 
+  group_by(month) %>% 
+  mutate(expected_month_year=mean(bikes_hired, na.rm = TRUE)) %>%
+  summarise(expected_mean=mean(expected_month_year)) 
 
-```{r calculate_returns, message=FALSE, warning=FALSE, cache=TRUE}
-#calculate daily returns
-myStocks_returns_daily <- myStocks %>%
-  tq_transmute(select     = adjusted, 
-               mutate_fun = periodReturn, 
-               period     = "daily", 
-               type       = "log",
-               col_rename = "daily_returns",
-               cols = c(nested.col))  
+# generate real bike hired value for each month in each year
+bike_real_month<-bike %>% 
+  filter(year>=2017 & year<=2022) %>% 
+  group_by(year,month) %>% 
+  summarise(actual_hired=mean(bikes_hired))
 
-#calculate monthly  returns
-myStocks_returns_monthly <- myStocks %>%
-  tq_transmute(select     = adjusted, 
-               mutate_fun = periodReturn, 
-               period     = "monthly", 
-               type       = "arithmetic",
-               col_rename = "monthly_returns",
-               cols = c(nested.col)) 
-```
+# combine expected and real bike table
+combine = left_join(x=bike_expected_month, y=bike_real_month, by = "month", all.x=TRUE) %>% 
+   mutate(min_1=pmin(actual_hired,expected_mean)) %>%
+   group_by(year)
 
-```{r}
-#visualise monthly returns since 2010, for each of the 30 DJIA stocks
-myStocks_returns_monthly %>% 
-  filter(symbol != "^VIX", symbol != "SPY") %>% 
-  filter(date >= "2010-01-01") %>% 
-  ggplot(aes(x = monthly_returns)) +
-  geom_density(aes(colour = symbol), alpha = 1) +
-  geom_histogram(aes(fill = symbol), alpha = 0.4, binwidth = 0.005)+
-  facet_wrap(~symbol, nrow=7)+
-  theme_bw(8)+
-  theme(legend.position = "none") +
-  scale_x_continuous(labels = scales::percent) +
-  labs(
-    title = "Distribution of monthly returns for DJIA stocks",
-    subtitle = "Jan 2010 - now",
-    x = "Monthly returns (%)",
-    y = "" )+
-  NULL
-
+# graphing ribbon and line
+h <- ggplot(combine, aes(x=month))
+h+  geom_ribbon(aes(ymin=min_1, ymax=actual_hired ,group=year),fill="chartreuse4",alpha=0.25)+
+    geom_ribbon(aes(ymin=min_1, ymax=expected_mean,group=year),fill="red", alpha=0.25)+
+    geom_line(aes(y=expected_mean,group=year), color="blue",size=0.8)+
+    geom_line(aes(y=actual_hired,group=year),color="black",size=0.2)+
+    facet_wrap(~year)+
+    labs(
+    title = "Monthly changes in TfL bike rentals",
+    subtitle = "Change from monthly average shown in blue
+and caculated between 2016-2019",
+    x = NULL,
+    y = "Bike rentals",
+    caption="Source: TfL, London Data Store")+
+    scale_y_continuous(limits = c(10000,45000))+           
+    theme_minimal()+
+    theme(text = element_text(size = 7))
 
 ```
 
+## The second one looks at percentage changes from the expected level of weekly rentals.
 
-```{r, risk_return, echo=FALSE}
+```{r tfl_percent_change, echo=FALSE, out.width="100%"}
+knitr::include_graphics(here::here("images", "tfl_weekly.png"), error = FALSE)
+```
 
-by_year_monthly <- myStocks_returns_monthly %>% 
-  mutate(year = year(date),
-         month=month(date),
-         month_name = month(date, label=TRUE)
-  )
+```{r tfl_percent_change_self, out.width="100%", fig.height=4.5}
 
-cols <- c("grey10","tomato")
+# generate expected bike hired value for each week
+bike_expected_week<-bike %>% 
+  filter(year>=2016 & year<=2019) %>% 
+  group_by(week) %>% 
+  mutate(expected_week_year=mean(bikes_hired)) %>%
+  summarise(expected_mean=mean(expected_week_year)) 
 
-  
-by_year_monthly %>% 
-  group_by(year,symbol) %>% 
-  filter(year>=2017) %>% 
-  filter(symbol != "^VIX") %>% 
-  summarise(mean_return = mean(monthly_returns, na.rm=TRUE),
-            sd_return = sd(monthly_returns, na.rm=TRUE),
-            ) %>% 
-  mutate(sp500 = ifelse(symbol == "SPY", TRUE, FALSE)) %>% 
-  
-  ggplot(aes(x=sd_return, y = mean_return))+
-  geom_point(aes(color = sp500))+
-  geom_text_repel(aes(label = symbol, color = sp500), size = 3)+
-  theme_bw()+
-  scale_colour_manual(values = cols)+
-  facet_wrap(~year,nrow = 5)+
-  theme(legend.position = "none")+
-  scale_y_continuous(labels = scales::percent) +
-  labs(
-    title = "Risk-Return tradeoff for DJIA stocks",
-    subtitle = "Monthly returns, Jan 2017- now",
-    x = "Risk (SD of monthly returns)",
-    y = "Return (Mean)" )+
-  NULL
+# generate real bike hired value for each month in each week
+bike_real_week<-bike %>% 
+  filter(year>=2017 & year <=2022) %>% 
+  group_by(year,week) %>% 
+  summarise(actual_hired=mean(bikes_hired))
+
+# combine expected and real bike table  
+combine1 = left_join(x=bike_expected_week, y=bike_real_week, by = "week", all.x=TRUE) %>% 
+   mutate(change = (actual_hired - expected_mean)/expected_mean, rug_positive=ifelse(change>0, "col1", "col2")) %>%
+   group_by(year) %>%                            
+   filter(week < 52)                       # to limited the extreme value(the week 52/53 may cover next year)
+
+
+# graphing ribbon and rug and line and rect
+library(scales)     # library for percentage drawing
+options(ggplot2.discrete.colour= c("chartreuse4", "red"))     # set the option for default factor color assignment 
+h <- ggplot(combine1, aes(x=week), options)
+h+geom_ribbon(aes(ymin=pmin(change,0), ymax=0 ,group=year),fill = "red", alpha = 0.25)+
+    geom_ribbon(aes(ymin=0, ymax=pmax(change,0),group=year),fill = "chartreuse4", alpha = 0.25)+
+    geom_line(aes(y=change,group=year), size = 0.7)+
+    geom_rect(aes(xmin=14,xmax=26),fill="grey", ymin=-1,ymax=1.5, alpha=0.01)+
+    geom_rect(aes(xmin=40,xmax=52),fill="grey", ymin=-1,ymax=1.5, alpha=0.01)+
+    geom_rug(aes(color = rug_positive), show.legend = FALSE)+
+    scale_y_continuous(limits = c(-0.55, 1.05),labels = percent)+         
+    facet_wrap(~year)+
+    labs(
+    title = "Weekly changes in TfL bike rentals",
+    subtitle = "% change from weekly averages
+calculated between 2016-2019",
+    x = "week",
+    y = NULL,
+    caption="Source: TfL, London Data Store"
+  ) +
+    theme_minimal()+
+    theme(text = element_text(size = 7))
 
 ```
+
+Should you use the mean or the median to calculate your expected rentals? Why?
+
+**Answer:**\
+
+Normally, a mean is used as expected values and in this case, expected rentals. This applies to the cases where the distribution is not extremely unsymmetrical. From the diagrams above, we can see that the distributions are generally symmetrical. If there are cases where the distributions are extremely skewed and have clear outliers, median would be preferred as the value is less distorted.\*\*\*
