@@ -87,16 +87,16 @@ params:
         url: blogs/assignment1
       - image: pic02.jpg
         subtitle: Feugiat Amet Tempus
-        title: Assignment 2
-        url: blogs/tempus
+        title: CV
+        url: blogs/CV
       - image: pic03.jpg
         subtitle: Lorem Etiam Nullam
-        title: Assignment 3
-        url: blogs/magna
+        title: Assignment 2
+        url: blogs/assignment2
       - image: pic04.jpg
         subtitle: Nisl Sed Aliquam
-        title: Biography
-        url: blogs/ipsum
+        title: Assignment 3
+        url: blogs/assignment3
     #  - image: pic05.jpg
      #   subtitle: Ipsum Dolor Sit Amet
      #   title: Consequat
