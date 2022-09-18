@@ -80,7 +80,7 @@ params:
   tiles:
     enable: yes
     showcase:
-      - image: LBS.jpg
+      - image: bikes.jpg
         subtitle: Exploratory Data Analysis using R
         title: Excess rentals in Transport for London bike sharing
         url: blogs/assignment1
@@ -88,7 +88,7 @@ params:
         subtitle: Feugiat Amet Tempus
         title: CV
         url: blogs/cv
-      - image: pic03.jpg
+      - image: movies.jpg
         subtitle: Inferential Statistics using R
         title: Differences of IMDB ratings between directors - Steven Spielberg and Tim Burton
         url: blogs/assignment2
