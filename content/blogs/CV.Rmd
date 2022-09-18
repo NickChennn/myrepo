@@ -48,5 +48,5 @@ library(data.table)
 ```
 
 ```{r label, out.width = "85%", fig.cap = "caption"}
-knitr::include_graphics("/img/cv.pdf",error=FALSE)
+knitr::include_graphics("static/img/blogs/cv.pdf",error=FALSE)
 ```
