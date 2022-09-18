@@ -47,6 +47,6 @@ library(scales)
 library(data.table)  
 ```
 
-```{r}
+```{r label, out.width = "85%", fig.cap = "caption"}
 knitr::include_graphics("/img/cv.pdf",error=FALSE)
 ```
