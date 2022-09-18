@@ -46,10 +46,10 @@ params:
       #  url: https://www.twitter.com
       - icon: fa-facebook
         label: Facebook
-        url: https://www.facebook.com
-      - icon: fa-instagram
-        label: Instagram
-        url: https://www.instagram.com
+        url: https://www.facebook.com/profile.php?id=100009468941642
+      #- icon: fa-instagram
+      #  label: Instagram
+      #  url: https://www.instagram.com
       - icon: fa-github
         label: GitHub
         url: https://github.com/NickChennn
