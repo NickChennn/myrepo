@@ -81,7 +81,7 @@ params:
     enable: yes
     showcase:
       - image: LBS.jpg
-        subtitle: Project using R
+        subtitle: Exploratory Data Analysis using R
         title: Excess rentals in Transport for London bike sharing
         url: blogs/assignment1
       - image: pic02.jpg
@@ -89,8 +89,8 @@ params:
         title: CV
         url: blogs/cv
       - image: pic03.jpg
-        subtitle: Lorem Etiam Nullam
-        title: Assignment 2
+        subtitle: Inferential Statistics using R
+        title: IMDB ratings: Differences between directors - Steven Spielberg and Tim Burton
         url: blogs/assignment2
     #  - image: pic04.jpg
      #   subtitle: Nisl Sed Aliquam

@@ -3,17 +3,15 @@ categories:
 - ""    #the front matter should be like the one found in, e.g., blog2.md. It cannot be like the normal Rmd we used
 - ""
 date: "2021-09-30"
-description: Risk-Return of DJIA stocks # the title that will show up once someone gets to this page
+description: IMDB ratings: Differences between directors - Steven Spielberg and Tim Burton # the title that will show up once someone gets to this page
 draft: false
-image: spices.jpg # save picture in \static\img\blogs. Acceptable formats= jpg, jpeg, or png . Your iPhone pics wont work
+image: movies.jpg # save picture in \static\img\blogs. Acceptable formats= jpg, jpeg, or png . Your iPhone pics wont work
 
 keywords: ""
 slug: assignment2 # slug is the shorthand URL address... no spaces plz
-title: Assignment 2
+title: IMDB ratings: Differences between directors - Steven Spielberg and Tim Burton
 ---
   
-
-
 
 ```{r, setup, echo=FALSE}
 knitr::opts_chunk$set(
@@ -31,161 +29,133 @@ knitr::opts_chunk$set(
 )
 ```
 
-
-```{r load-libraries, warning=FALSE, message=FALSE, echo=FALSE}
+```{r load-libraries, echo=FALSE}
 library(tidyverse)  # Load ggplot2, dplyr, and all the other tidyverse packages
-library(lubridate)
+library(mosaic)
+library(ggthemes)
+library(GGally)
+library(readxl)
 library(here)
 library(skimr)
 library(janitor)
-library(vroom)
+library(broom)
 library(tidyquant)
-library(rvest)    # scrape websites
-library(purrr)  
-library(lubridate) #to handle dates
-library(ggrepel)
+library(infer)
+library(openintro)
+library(knitr)
+library(scales)                         
+library(data.table)  
 ```
 
+## 1. Summary and preview of the dataset
 
-# Returns of financial stocks
-
-Next, let's choose the [Dow Jones Industrial Average (DJIA)](https://en.wikipedia.org/wiki/Dow_Jones_Industrial_Average) stocks and their ticker symbols and download some data. Besides the thirty stocks that make up the DJIA, we will also add `SPY` which is an SP500 ETF (Exchange Traded Fund).
-
-We will use the `rvest` package to scrape the Wikipedia page for the constituents of DJIA
-
-```{r, tickers_from_wikipedia}
-
-djia_url <- "https://en.wikipedia.org/wiki/Dow_Jones_Industrial_Average"
-
-
-#get tables that exist on URL
-tables <- djia_url %>% 
-  read_html() %>% 
-  html_nodes(css="table")
-
-
-# parse HTML tables into a dataframe called djia. 
-# Use purr::map() to create a list of all tables in URL
-djia <- map(tables, . %>% 
-               html_table(fill=TRUE)%>% 
-               clean_names())
-
-
-# constituents
-table1 <- djia[[2]] %>% # the second table on the page contains the ticker symbols
-  mutate(date_added = ymd(date_added),
-         
-         # if a stock is listed on NYSE, its symbol is, e.g., NYSE: MMM
-         # We will get prices from yahoo finance which requires just the ticker
-         
-         # if symbol contains "NYSE*", the * being a wildcard
-         # then we jsut drop the first 6 characters in that string
-         ticker = ifelse(str_detect(symbol, "NYSE*"),
-                          str_sub(symbol,7,11),
-                          symbol)
-         )
-
-# we need a vector of strings with just the 30 tickers + SPY  + VIX
-tickers <- table1 %>% 
-  select(ticker) %>% 
-  pull() %>% # pull() gets them as a sting of characters
-  c("SPY", "^VIX") # and lets us add SPY, the SP500 ETF, and the VIX index
+```{r load-movies-data}
+movies <- read_csv(here::here("data", "movies.csv"))
+skim(movies)
+glimpse(movies)
 
 ```
 
 
+## 2. Calculation and Visualization of Confidence Interval
+
+```{r, fig.height=4, out.width="100%"}
+
+# Filtering data for directors
+movies<-movies%>%
+  filter(director %in% c("Steven Spielberg", "Tim Burton"))
+
+#director=="Steven Spielberg",mean=7.57 ,the 95% confidence interval is [7.27,7.87]
+a<-movies%>%
+  filter(director=="Steven Spielberg")
+t.test(a$rating)
+
+#director=="Tim Burton",mean=6.93 ,the 95% confidence interval is [6.53,7.33]
+b<-movies%>%
+  filter(director=="Tim Burton")
+t.test(b$rating)
 
 
-```{r get_price_data, message=FALSE, warning=FALSE, cache=TRUE}
-# Notice the cache=TRUE argument in the chunk options. Because getting data is time consuming, # cache=TRUE means that once it downloads data, the chunk will not run again next time you knit your Rmd
+df <- tibble(
+  director = c("Steven Spielberg","Tim Burton"),
+  mean = c(7.57, 6.93),
+  lower = c( 7.27,6.53),
+  upper = c( 7.87, 7.33)
+) %>% 
+  map_df(rev)
 
-myStocks <- tickers %>% 
-  tq_get(get  = "stock.prices",
-         from = "2000-01-01") %>%
-  group_by(symbol) 
 
-glimpse(myStocks) # examine the structure of the resulting data frame
+options(ggplot2.discrete.colour= c("#F8766D", "#00BFC4"))
+
+p <- ggplot(data = df,aes(color = director))
+p+geom_errorbarh(aes(y=forcats::fct_inorder(director),xmin=lower,xmax=upper),
+                 height=0.1,
+                 size=1.5)+
+  #geom_text(aes(label=VAL),size=4,Vjust=-0.5)+
+  geom_text(aes(label = mean, x = mean, y = director), vjust = -1.5, size=6, color = "black") +
+  geom_text(aes(label = lower, x = lower, y = director), vjust = -2.5, size=4, color = "black") +
+  geom_text(aes(label = upper, x = upper, y = director), vjust = -2.5, size=4, color = "black") +
+  geom_point(aes(x=mean,y=director),size=5)+
+  theme_bw()+
+  ggtitle("Do Spielberg and Burton have the same mean IMDB ratings",
+          subtitle = "95% confidence intercals overlap")+
+  theme(legend.position = "none")+
+  xlab("Mean IMBD Rating")+
+  ylab("")+
+  geom_rect(aes(xmin=7.271, xmax=7.311, ymin=-Inf, ymax=Inf), color = NA,alpha = .1)
+
 ```
 
-Financial performance analysis depend on returns; If I buy a stock today for 100 and I sell it tomorrow for 101.75, my one-day return, assuming no transaction costs, is 1.75%. So given the adjusted closing prices, our first step is to calculate daily and monthly returns.
+## 3. Hypothesis Testing using the t-test and "infer" package
 
+Null hypotheses:the mean IMDB rating for Steven Spielberg and Tim Burton are the same .\
+Alternative hypotheses:the mean IMDB rating for Steven Spielberg and Tim Burton are not the same .\
 
-```{r calculate_returns, message=FALSE, warning=FALSE, cache=TRUE}
-#calculate daily returns
-myStocks_returns_daily <- myStocks %>%
-  tq_transmute(select     = adjusted, 
-               mutate_fun = periodReturn, 
-               period     = "daily", 
-               type       = "log",
-               col_rename = "daily_returns",
-               cols = c(nested.col))  
-
-#calculate monthly  returns
-myStocks_returns_monthly <- myStocks %>%
-  tq_transmute(select     = adjusted, 
-               mutate_fun = periodReturn, 
-               period     = "monthly", 
-               type       = "arithmetic",
-               col_rename = "monthly_returns",
-               cols = c(nested.col)) 
-```
+Using the t-test:
 
 ```{r}
-#visualise monthly returns since 2010, for each of the 30 DJIA stocks
-myStocks_returns_monthly %>% 
-  filter(symbol != "^VIX", symbol != "SPY") %>% 
-  filter(date >= "2010-01-01") %>% 
-  ggplot(aes(x = monthly_returns)) +
-  geom_density(aes(colour = symbol), alpha = 1) +
-  geom_histogram(aes(fill = symbol), alpha = 0.4, binwidth = 0.005)+
-  facet_wrap(~symbol, nrow=7)+
-  theme_bw(8)+
-  theme(legend.position = "none") +
-  scale_x_continuous(labels = scales::percent) +
-  labs(
-    title = "Distribution of monthly returns for DJIA stocks",
-    subtitle = "Jan 2010 - now",
-    x = "Monthly returns (%)",
-    y = "" )+
-  NULL
 
+t.test(rating ~ director, data = movies)
 
 ```
 
+Using the infer package:\
 
-```{r, risk_return, echo=FALSE}
+```{r, hypothesis_testing_with_infer_package}
 
-by_year_monthly <- myStocks_returns_monthly %>% 
-  mutate(year = year(date),
-         month=month(date),
-         month_name = month(date, label=TRUE)
-  )
+# Calculate diff in means
 
-cols <- c("grey10","tomato")
+obs_diff <- movies %>%
+  specify(rating ~ director) %>%
+  calculate(stat = "diff in means", order = c("Steven Spielberg","Tim Burton"))
 
+
+# Infer package
+
+null_dist <- movies %>%
+  # specify variables
+  specify(rating ~ director) %>%
   
-by_year_monthly %>% 
-  group_by(year,symbol) %>% 
-  filter(year>=2017) %>% 
-  filter(symbol != "^VIX") %>% 
-  summarise(mean_return = mean(monthly_returns, na.rm=TRUE),
-            sd_return = sd(monthly_returns, na.rm=TRUE),
-            ) %>% 
-  mutate(sp500 = ifelse(symbol == "SPY", TRUE, FALSE)) %>% 
+  # assume independence, i.e, there is no difference
+  hypothesize(null = "independence") %>%
   
-  ggplot(aes(x=sd_return, y = mean_return))+
-  geom_point(aes(color = sp500))+
-  geom_text_repel(aes(label = symbol, color = sp500), size = 3)+
-  theme_bw()+
-  scale_colour_manual(values = cols)+
-  facet_wrap(~year,nrow = 5)+
-  theme(legend.position = "none")+
-  scale_y_continuous(labels = scales::percent) +
-  labs(
-    title = "Risk-Return tradeoff for DJIA stocks",
-    subtitle = "Monthly returns, Jan 2017- now",
-    x = "Risk (SD of monthly returns)",
-    y = "Return (Mean)" )+
-  NULL
+  # generate 1000 reps, of type "permute"
+  generate(reps = 1000, type = "permute") %>%
+  
+  # calculate statistic of difference, namely "diff in means"
+  calculate(stat = "diff in means", order = c("Steven Spielberg","Tim Burton"))
+
+# Plot the relevant values
+
+null_dist %>% visualize() +
+  shade_p_value(obs_stat = obs_diff, direction = "two-sided")+
+  theme_bw()
+
+null_dist %>%
+  get_p_value(obs_stat = obs_diff, direction = "two_sided")
 
 ```
+
+**Answer:**\
+
+Both the formula as well as the infer approach showed (p-value \< 5% etc.) that we can reject the null hypothesis. At the end of the day we thus conclude that indeed the true difference in means between Steven Spielberg Movies and Tim Burton Movies is not equal to 0.
