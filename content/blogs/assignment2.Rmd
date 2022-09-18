@@ -11,7 +11,7 @@ keywords: ""
 slug: assignment2 # slug is the shorthand URL address... no spaces plz
 title: Differences of IMDB ratings between directors - Steven Spielberg and Tim Burton
 ---
-  
+
 
 ```{r, setup, echo=FALSE}
 knitr::opts_chunk$set(
