@@ -3,110 +3,391 @@ categories:
 - ""    #the front matter should be like the one found in, e.g., blog2.md. It cannot be like the normal Rmd we used
 - ""
 date: "2021-09-30"
-description: Risk-Return of DJIA stocks # the title that will show up once someone gets to this page
+description: Differences of IMDB ratings between directors - Steven Spielberg and Tim Burton # the title that will show up once someone gets to this page
 draft: false
-image: spices.jpg # save picture in \static\img\blogs. Acceptable formats= jpg, jpeg, or png . Your iPhone pics wont work
+image: movies.jpg # save picture in \static\img\blogs. Acceptable formats= jpg, jpeg, or png . Your iPhone pics wont work
 
 keywords: ""
 slug: assignment2 # slug is the shorthand URL address... no spaces plz
-title: Assignment 2
+title: Differences of IMDB ratings between directors - Steven Spielberg and Tim Burton
 ---
 
 
 
-<div id="returns-of-financial-stocks" class="section level1">
-<h1>Returns of financial stocks</h1>
-<p>Next, let’s choose the <a href="https://en.wikipedia.org/wiki/Dow_Jones_Industrial_Average">Dow Jones Industrial Average (DJIA)</a> stocks and their ticker symbols and download some data. Besides the thirty stocks that make up the DJIA, we will also add <code>SPY</code> which is an SP500 ETF (Exchange Traded Fund).</p>
-<p>We will use the <code>rvest</code> package to scrape the Wikipedia page for the constituents of DJIA</p>
-<pre class="r"><code>djia_url &lt;- &quot;https://en.wikipedia.org/wiki/Dow_Jones_Industrial_Average&quot;
+<div id="summary-and-preview-of-the-dataset" class="section level2">
+<h2>1. Summary and preview of the dataset</h2>
+<pre class="r"><code>movies &lt;- read_csv(here::here(&quot;data&quot;, &quot;movies.csv&quot;))
+skim(movies)</code></pre>
+<table>
+<caption><span id="tab:load-movies-data">Table 1: </span>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td align="left">Name</td>
+<td align="left">movies</td>
+</tr>
+<tr class="even">
+<td align="left">Number of rows</td>
+<td align="left">2961</td>
+</tr>
+<tr class="odd">
+<td align="left">Number of columns</td>
+<td align="left">11</td>
+</tr>
+<tr class="even">
+<td align="left">_______________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Column type frequency:</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">character</td>
+<td align="left">3</td>
+</tr>
+<tr class="odd">
+<td align="left">numeric</td>
+<td align="left">8</td>
+</tr>
+<tr class="even">
+<td align="left">________________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Group variables</td>
+<td align="left">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: character</strong></p>
+<table>
+<colgroup>
+<col width="19%" />
+<col width="13%" />
+<col width="19%" />
+<col width="5%" />
+<col width="5%" />
+<col width="8%" />
+<col width="12%" />
+<col width="15%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">min</th>
+<th align="right">max</th>
+<th align="right">empty</th>
+<th align="right">n_unique</th>
+<th align="right">whitespace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">title</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">83</td>
+<td align="right">0</td>
+<td align="right">2907</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">genre</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">5</td>
+<td align="right">11</td>
+<td align="right">0</td>
+<td align="right">17</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">director</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">3</td>
+<td align="right">32</td>
+<td align="right">0</td>
+<td align="right">1366</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table style="width:100%;">
+<colgroup>
+<col width="18%" />
+<col width="9%" />
+<col width="12%" />
+<col width="8%" />
+<col width="8%" />
+<col width="6%" />
+<col width="8%" />
+<col width="8%" />
+<col width="8%" />
+<col width="8%" />
+<col width="5%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">mean</th>
+<th align="right">sd</th>
+<th align="right">p0</th>
+<th align="right">p25</th>
+<th align="right">p50</th>
+<th align="right">p75</th>
+<th align="right">p100</th>
+<th align="left">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">year</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">2.00e+03</td>
+<td align="right">9.95e+00</td>
+<td align="right">1920.0</td>
+<td align="right">2.00e+03</td>
+<td align="right">2.00e+03</td>
+<td align="right">2.01e+03</td>
+<td align="right">2.02e+03</td>
+<td align="left">▁▁▁▂▇</td>
+</tr>
+<tr class="even">
+<td align="left">duration</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">1.10e+02</td>
+<td align="right">2.22e+01</td>
+<td align="right">37.0</td>
+<td align="right">9.50e+01</td>
+<td align="right">1.06e+02</td>
+<td align="right">1.19e+02</td>
+<td align="right">3.30e+02</td>
+<td align="left">▃▇▁▁▁</td>
+</tr>
+<tr class="odd">
+<td align="left">gross</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">5.81e+07</td>
+<td align="right">7.25e+07</td>
+<td align="right">703.0</td>
+<td align="right">1.23e+07</td>
+<td align="right">3.47e+07</td>
+<td align="right">7.56e+07</td>
+<td align="right">7.61e+08</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td align="left">budget</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">4.06e+07</td>
+<td align="right">4.37e+07</td>
+<td align="right">218.0</td>
+<td align="right">1.10e+07</td>
+<td align="right">2.60e+07</td>
+<td align="right">5.50e+07</td>
+<td align="right">3.00e+08</td>
+<td align="left">▇▂▁▁▁</td>
+</tr>
+<tr class="odd">
+<td align="left">cast_facebook_likes</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">1.24e+04</td>
+<td align="right">2.05e+04</td>
+<td align="right">0.0</td>
+<td align="right">2.24e+03</td>
+<td align="right">4.60e+03</td>
+<td align="right">1.69e+04</td>
+<td align="right">6.57e+05</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td align="left">votes</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">1.09e+05</td>
+<td align="right">1.58e+05</td>
+<td align="right">5.0</td>
+<td align="right">1.99e+04</td>
+<td align="right">5.57e+04</td>
+<td align="right">1.33e+05</td>
+<td align="right">1.69e+06</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td align="left">reviews</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">5.03e+02</td>
+<td align="right">4.94e+02</td>
+<td align="right">2.0</td>
+<td align="right">1.99e+02</td>
+<td align="right">3.64e+02</td>
+<td align="right">6.31e+02</td>
+<td align="right">5.31e+03</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td align="left">rating</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">6.39e+00</td>
+<td align="right">1.05e+00</td>
+<td align="right">1.6</td>
+<td align="right">5.80e+00</td>
+<td align="right">6.50e+00</td>
+<td align="right">7.10e+00</td>
+<td align="right">9.30e+00</td>
+<td align="left">▁▁▆▇▁</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>glimpse(movies)</code></pre>
+<pre><code>## Rows: 2,961
+## Columns: 11
+## $ title               &lt;chr&gt; &quot;Avatar&quot;, &quot;Titanic&quot;, &quot;Jurassic World&quot;, &quot;The Avenge…
+## $ genre               &lt;chr&gt; &quot;Action&quot;, &quot;Drama&quot;, &quot;Action&quot;, &quot;Action&quot;, &quot;Action&quot;, &quot;…
+## $ director            &lt;chr&gt; &quot;James Cameron&quot;, &quot;James Cameron&quot;, &quot;Colin Trevorrow…
+## $ year                &lt;dbl&gt; 2009, 1997, 2015, 2012, 2008, 1999, 1977, 2015, 20…
+## $ duration            &lt;dbl&gt; 178, 194, 124, 173, 152, 136, 125, 141, 164, 93, 1…
+## $ gross               &lt;dbl&gt; 7.61e+08, 6.59e+08, 6.52e+08, 6.23e+08, 5.33e+08, …
+## $ budget              &lt;dbl&gt; 2.37e+08, 2.00e+08, 1.50e+08, 2.20e+08, 1.85e+08, …
+## $ cast_facebook_likes &lt;dbl&gt; 4834, 45223, 8458, 87697, 57802, 37723, 13485, 920…
+## $ votes               &lt;dbl&gt; 886204, 793059, 418214, 995415, 1676169, 534658, 9…
+## $ reviews             &lt;dbl&gt; 3777, 2843, 1934, 2425, 5312, 3917, 1752, 1752, 35…
+## $ rating              &lt;dbl&gt; 7.9, 7.7, 7.0, 8.1, 9.0, 6.5, 8.7, 7.5, 8.5, 7.2, …</code></pre>
+</div>
+<div id="calculation-and-visualization-of-confidence-interval" class="section level2">
+<h2>2. Calculation and Visualization of Confidence Interval</h2>
+<pre class="r"><code># Filtering data for directors
+movies&lt;-movies%&gt;%
+  filter(director %in% c(&quot;Steven Spielberg&quot;, &quot;Tim Burton&quot;))
+
+#director==&quot;Steven Spielberg&quot;,mean=7.57 ,the 95% confidence interval is [7.27,7.87]
+a&lt;-movies%&gt;%
+  filter(director==&quot;Steven Spielberg&quot;)
+t.test(a$rating)</code></pre>
+<pre><code>## 
+##  One Sample t-test
+## 
+## data:  a$rating
+## t = 52, df = 22, p-value &lt;2e-16
+## alternative hypothesis: true mean is not equal to 0
+## 95 percent confidence interval:
+##  7.27 7.87
+## sample estimates:
+## mean of x 
+##      7.57</code></pre>
+<pre class="r"><code>#director==&quot;Tim Burton&quot;,mean=6.93 ,the 95% confidence interval is [6.53,7.33]
+b&lt;-movies%&gt;%
+  filter(director==&quot;Tim Burton&quot;)
+t.test(b$rating)</code></pre>
+<pre><code>## 
+##  One Sample t-test
+## 
+## data:  b$rating
+## t = 37, df = 15, p-value = 4e-16
+## alternative hypothesis: true mean is not equal to 0
+## 95 percent confidence interval:
+##  6.53 7.33
+## sample estimates:
+## mean of x 
+##      6.93</code></pre>
+<pre class="r"><code>df &lt;- tibble(
+  director = c(&quot;Steven Spielberg&quot;,&quot;Tim Burton&quot;),
+  mean = c(7.57, 6.93),
+  lower = c( 7.27,6.53),
+  upper = c( 7.87, 7.33)
+) %&gt;% 
+  map_df(rev)
 
 
-#get tables that exist on URL
-tables &lt;- djia_url %&gt;% 
-  read_html() %&gt;% 
-  html_nodes(css=&quot;table&quot;)
+options(ggplot2.discrete.colour= c(&quot;#F8766D&quot;, &quot;#00BFC4&quot;))
+
+p &lt;- ggplot(data = df,aes(color = director))
+p+geom_errorbarh(aes(y=forcats::fct_inorder(director),xmin=lower,xmax=upper),
+                 height=0.1,
+                 size=1.5)+
+  #geom_text(aes(label=VAL),size=4,Vjust=-0.5)+
+  geom_text(aes(label = mean, x = mean, y = director), vjust = -1.5, size=6, color = &quot;black&quot;) +
+  geom_text(aes(label = lower, x = lower, y = director), vjust = -2.5, size=4, color = &quot;black&quot;) +
+  geom_text(aes(label = upper, x = upper, y = director), vjust = -2.5, size=4, color = &quot;black&quot;) +
+  geom_point(aes(x=mean,y=director),size=5)+
+  theme_bw()+
+  ggtitle(&quot;Do Spielberg and Burton have the same mean IMDB ratings&quot;,
+          subtitle = &quot;95% confidence intercals overlap&quot;)+
+  theme(legend.position = &quot;none&quot;)+
+  xlab(&quot;Mean IMBD Rating&quot;)+
+  ylab(&quot;&quot;)+
+  geom_rect(aes(xmin=7.271, xmax=7.311, ymin=-Inf, ymax=Inf), color = NA,alpha = .1)</code></pre>
+<p><img src="/blogs/assignment2_files/figure-html/unnamed-chunk-1-1.png" width="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="hypothesis-testing-using-the-t-test-and-infer-package" class="section level2">
+<h2>3. Hypothesis Testing using the t-test and “infer” package</h2>
+<p>Null hypotheses:the mean IMDB rating for Steven Spielberg and Tim Burton are the same .<br />
+Alternative hypotheses:the mean IMDB rating for Steven Spielberg and Tim Burton are not the same .<br />
+</p>
+<p>Using the t-test:</p>
+<pre class="r"><code>t.test(rating ~ director, data = movies)</code></pre>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  rating by director
+## t = 3, df = 31, p-value = 0.01
+## alternative hypothesis: true difference in means between group Steven Spielberg and group Tim Burton is not equal to 0
+## 95 percent confidence interval:
+##  0.16 1.13
+## sample estimates:
+## mean in group Steven Spielberg       mean in group Tim Burton 
+##                           7.57                           6.93</code></pre>
+<p>Using the infer package:<br />
+</p>
+<pre class="r"><code># Calculate diff in means
+
+obs_diff &lt;- movies %&gt;%
+  specify(rating ~ director) %&gt;%
+  calculate(stat = &quot;diff in means&quot;, order = c(&quot;Steven Spielberg&quot;,&quot;Tim Burton&quot;))
 
 
-# parse HTML tables into a dataframe called djia. 
-# Use purr::map() to create a list of all tables in URL
-djia &lt;- map(tables, . %&gt;% 
-               html_table(fill=TRUE)%&gt;% 
-               clean_names())
+# Infer package
 
+null_dist &lt;- movies %&gt;%
+  # specify variables
+  specify(rating ~ director) %&gt;%
+  
+  # assume independence, i.e, there is no difference
+  hypothesize(null = &quot;independence&quot;) %&gt;%
+  
+  # generate 1000 reps, of type &quot;permute&quot;
+  generate(reps = 1000, type = &quot;permute&quot;) %&gt;%
+  
+  # calculate statistic of difference, namely &quot;diff in means&quot;
+  calculate(stat = &quot;diff in means&quot;, order = c(&quot;Steven Spielberg&quot;,&quot;Tim Burton&quot;))
 
-# constituents
-table1 &lt;- djia[[2]] %&gt;% # the second table on the page contains the ticker symbols
-  mutate(date_added = ymd(date_added),
-         
-         # if a stock is listed on NYSE, its symbol is, e.g., NYSE: MMM
-         # We will get prices from yahoo finance which requires just the ticker
-         
-         # if symbol contains &quot;NYSE*&quot;, the * being a wildcard
-         # then we jsut drop the first 6 characters in that string
-         ticker = ifelse(str_detect(symbol, &quot;NYSE*&quot;),
-                          str_sub(symbol,7,11),
-                          symbol)
-         )
+# Plot the relevant values
 
-# we need a vector of strings with just the 30 tickers + SPY  + VIX
-tickers &lt;- table1 %&gt;% 
-  select(ticker) %&gt;% 
-  pull() %&gt;% # pull() gets them as a sting of characters
-  c(&quot;SPY&quot;, &quot;^VIX&quot;) # and lets us add SPY, the SP500 ETF, and the VIX index</code></pre>
-<pre class="r"><code># Notice the cache=TRUE argument in the chunk options. Because getting data is time consuming, # cache=TRUE means that once it downloads data, the chunk will not run again next time you knit your Rmd
-
-myStocks &lt;- tickers %&gt;% 
-  tq_get(get  = &quot;stock.prices&quot;,
-         from = &quot;2000-01-01&quot;) %&gt;%
-  group_by(symbol) 
-
-glimpse(myStocks) # examine the structure of the resulting data frame</code></pre>
-<pre><code>## Rows: 174,768
-## Columns: 8
-## Groups: symbol [32]
-## $ symbol   &lt;chr&gt; &quot;MMM&quot;, &quot;MMM&quot;, &quot;MMM&quot;, &quot;MMM&quot;, &quot;MMM&quot;, &quot;MMM&quot;, &quot;MMM&quot;, &quot;MMM&quot;, &quot;MMM&quot;…
-## $ date     &lt;date&gt; 2000-01-03, 2000-01-04, 2000-01-05, 2000-01-06, 2000-01-07, …
-## $ open     &lt;dbl&gt; 48.0, 46.4, 45.6, 47.2, 50.6, 50.2, 50.4, 51.0, 50.7, 50.4, 4…
-## $ high     &lt;dbl&gt; 48.2, 47.4, 48.1, 51.2, 51.9, 51.8, 51.2, 51.8, 50.9, 50.5, 4…
-## $ low      &lt;dbl&gt; 47.0, 45.3, 45.6, 47.2, 50.0, 50.0, 50.2, 50.4, 50.2, 49.5, 4…
-## $ close    &lt;dbl&gt; 47.2, 45.3, 46.6, 50.4, 51.4, 51.1, 50.2, 50.4, 50.4, 49.7, 4…
-## $ volume   &lt;dbl&gt; 2173400, 2713800, 3699400, 5975800, 4101200, 3863800, 2357600…
-## $ adjusted &lt;dbl&gt; 26.2, 25.1, 25.9, 27.9, 28.5, 28.3, 27.9, 27.9, 27.9, 27.5, 2…</code></pre>
-<p>Financial performance analysis depend on returns; If I buy a stock today for 100 and I sell it tomorrow for 101.75, my one-day return, assuming no transaction costs, is 1.75%. So given the adjusted closing prices, our first step is to calculate daily and monthly returns.</p>
-<pre class="r"><code>#calculate daily returns
-myStocks_returns_daily &lt;- myStocks %&gt;%
-  tq_transmute(select     = adjusted, 
-               mutate_fun = periodReturn, 
-               period     = &quot;daily&quot;, 
-               type       = &quot;log&quot;,
-               col_rename = &quot;daily_returns&quot;,
-               cols = c(nested.col))  
-
-#calculate monthly  returns
-myStocks_returns_monthly &lt;- myStocks %&gt;%
-  tq_transmute(select     = adjusted, 
-               mutate_fun = periodReturn, 
-               period     = &quot;monthly&quot;, 
-               type       = &quot;arithmetic&quot;,
-               col_rename = &quot;monthly_returns&quot;,
-               cols = c(nested.col)) </code></pre>
-<pre class="r"><code>#visualise monthly returns since 2010, for each of the 30 DJIA stocks
-myStocks_returns_monthly %&gt;% 
-  filter(symbol != &quot;^VIX&quot;, symbol != &quot;SPY&quot;) %&gt;% 
-  filter(date &gt;= &quot;2010-01-01&quot;) %&gt;% 
-  ggplot(aes(x = monthly_returns)) +
-  geom_density(aes(colour = symbol), alpha = 1) +
-  geom_histogram(aes(fill = symbol), alpha = 0.4, binwidth = 0.005)+
-  facet_wrap(~symbol, nrow=7)+
-  theme_bw(8)+
-  theme(legend.position = &quot;none&quot;) +
-  scale_x_continuous(labels = scales::percent) +
-  labs(
-    title = &quot;Distribution of monthly returns for DJIA stocks&quot;,
-    subtitle = &quot;Jan 2010 - now&quot;,
-    x = &quot;Monthly returns (%)&quot;,
-    y = &quot;&quot; )+
-  NULL</code></pre>
-<p><img src="/blogs/assignment2_files/figure-html/unnamed-chunk-1-1.png" width="648" style="display: block; margin: auto;" /></p>
-<p><img src="/blogs/assignment2_files/figure-html/risk_return-1.png" width="648" style="display: block; margin: auto;" /></p>
+null_dist %&gt;% visualize() +
+  shade_p_value(obs_stat = obs_diff, direction = &quot;two-sided&quot;)+
+  theme_bw()</code></pre>
+<p><img src="/blogs/assignment2_files/figure-html/hypothesis_testing_with_infer_package-1.png" width="648" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>null_dist %&gt;%
+  get_p_value(obs_stat = obs_diff, direction = &quot;two_sided&quot;)</code></pre>
+<pre><code>## # A tibble: 1 × 1
+##   p_value
+##     &lt;dbl&gt;
+## 1   0.012</code></pre>
+<p><strong>Answer:</strong><br />
+</p>
+<p>Both the formula as well as the infer approach showed (p-value &lt; 5% etc.) that we can reject the null hypothesis. At the end of the day we thus conclude that indeed the true difference in means between Steven Spielberg Movies and Tim Burton Movies is not equal to 0.</p>
 </div>
