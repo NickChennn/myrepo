@@ -90,7 +90,7 @@ params:
         url: blogs/cv
       - image: pic03.jpg
         subtitle: Inferential Statistics using R
-        title: IMDB ratings: Differences between directors - Steven Spielberg and Tim Burton
+        title: Differences of IMDB ratings between directors - Steven Spielberg and Tim Burton
         url: blogs/assignment2
     #  - image: pic04.jpg
      #   subtitle: Nisl Sed Aliquam
