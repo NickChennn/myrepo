@@ -47,6 +47,6 @@ library(scales)
 library(data.table)  
 ```
 
-```{r label, out.width = "85%", fig.cap = "caption"}
-knitr::include_graphics("/img/CV.jpg",error=FALSE)
+```{r cv, echo=FALSE, out.width="100%"}
+knitr::include_graphics("/img/blogs/cv.jpg",error=FALSE)
 ```
