@@ -61,7 +61,7 @@ This is the game against Real Madrid (Terrible 1-3 Loss), Champions League 2021/
 ```{r, echo=FALSE, out.width="50%", out.height="50%"}
 knitr::include_graphics("/img/blogs/Stadium.jpg",error=FALSE)
 ```
-Me outside Stamford Stadium! 
+Me outside of Stamford Stadium! 
 
 ```{r, echo=FALSE, out.width="50%", out.height="50%"}
 knitr::include_graphics("/img/blogs/Mallorca.jpg",error=FALSE)
