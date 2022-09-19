@@ -51,7 +51,7 @@ library(data.table)
 
 ## Below is a "glimpse" of my recent life
 
-```{r, echo=FALSE, out.width="50%"}
+```{r, echo=FALSE, out.width="50%", out.height="50%"}
 knitr::include_graphics("/img/blogs/Chelsea.jpg",error=FALSE)
 ```
 I am big fan of Bayern Munich and Chelsea. 
