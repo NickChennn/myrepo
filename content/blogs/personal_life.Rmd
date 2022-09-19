@@ -118,20 +118,34 @@ knitr::include_graphics("/img/blogs/Xian.jpg",error=FALSE)
 ```
 XiAn, a historical city in China
 
-</center>
+```{r, echo=FALSE, out.width="50%"}
+knitr::include_graphics("/img/blogs/Brussels.jpg",error=FALSE)
+```
+Brussels Belgium, where I had my absolute favourate fries on this planet
 
 ```{r, echo=FALSE, out.width="50%"}
-knitr::include_graphics("/img/blogs/Nanking.jpg",error=FALSE)
+knitr::include_graphics("/img/blogs/Madrid.jpg",error=FALSE)
 ```
+Royal Palace, Madrid, Spain
 
-```{r, echo=FALSE, out.width="70%"}
-knitr::include_graphics("/img/blogs/Nanking.jpg",error=FALSE)
+```{r, echo=FALSE, out.width="50%"}
+knitr::include_graphics("/img/blogs/Amsterdam.jpg",error=FALSE)
 ```
+Delftware, chinas originated from Qing Dynasty. Taken in Amsterdam, Netherland
 
-```{r, echo=FALSE, out.width="70%"}
-knitr::include_graphics("/img/blogs/Nanking.jpg",error=FALSE)
+```{r, echo=FALSE, out.width="50%"}
+knitr::include_graphics("/img/blogs/Barcelona.jpg",error=FALSE)
 ```
+Champions League trophies displayed in Camp Nou, Barcelona, Spain
 
-```{r, echo=FALSE, out.width="70%"}
-knitr::include_graphics("/img/blogs/Nanking.jpg",error=FALSE)
+```{r, echo=FALSE, out.width="50%"}
+knitr::include_graphics("/img/blogs/Hangzhou.jpg",error=FALSE)
 ```
+Buddhist temple in Hangzhou, China
+
+```{r, echo=FALSE, out.width="50%"}
+knitr::include_graphics("/img/blogs/Rotterdam.jpg",error=FALSE)
+```
+Rotterdam, Netherland
+
+</center>
