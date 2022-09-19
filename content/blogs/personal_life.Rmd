@@ -51,73 +51,73 @@ library(data.table)
 
 ## Below is a "glimpse" of my recent life
 
-```{r, echo=FALSE, out.width="70%"}
+```{r, echo=FALSE, out.width="50%"}
 knitr::include_graphics("/img/blogs/Chelsea.jpg",error=FALSE)
 ```
 I am big fan of Bayern Munich and Chelsea. 
 This is the game against Real Madrid (Terrible 1-3 Loss), Champions League 2021/22
 
-```{r, echo=FALSE, out.width="70%"}
+```{r, echo=FALSE, out.width="50%"}
 knitr::include_graphics("/img/blogs/Stadium.jpg",error=FALSE)
 ```
 Me outside Stamford Stadium! 
 
-```{r, echo=FALSE, out.width="70%"}
+```{r, echo=FALSE, out.width="50%"}
 knitr::include_graphics("/img/blogs/Mallorca.jpg",error=FALSE)
 ```
 Mallorca, Spain
 
-```{r, echo=FALSE, out.width="70%"}
+```{r, echo=FALSE, out.width="30%"}
 knitr::include_graphics("/img/blogs/Changsha.jpg",error=FALSE)
 ```
 Mouthwatering spicy foods in Changsha, China
 
-```{r, echo=FALSE, out.width="70%"}
+```{r, echo=FALSE, out.width="50%"}
 knitr::include_graphics("/img/blogs/Chongqing.jpg",error=FALSE)
 ```
 Chongqing, China
 
-```{r, echo=FALSE, out.width="70%"}
+```{r, echo=FALSE, out.width="50%"}
 knitr::include_graphics("/img/blogs/Edinburgh.jpg",error=FALSE)
 ```
 Edinburgh, Scotland
 
-```{r, echo=FALSE, out.width="70%"}
+```{r, echo=FALSE, out.width="50%"}
 knitr::include_graphics("/img/blogs/Kinderdijk.jpg",error=FALSE)
 ```
 Kinderdijk, Netherland
 
-```{r, echo=FALSE, out.width="70%"}
+```{r, echo=FALSE, out.width="50%"}
 knitr::include_graphics("/img/blogs/Nanking.jpg",error=FALSE)
 ```
 Me feeding deers in Nanking, China
 
-```{r, echo=FALSE, out.width="70%"}
+```{r, echo=FALSE, out.width="40%"}
 knitr::include_graphics("/img/blogs/Paris.jpg",error=FALSE)
 ```
 Disneyland Paris, France
 
-```{r, echo=FALSE, out.width="70%"}
+```{r, echo=FALSE, out.width="50%"}
 knitr::include_graphics("/img/blogs/Qingdao.jpg",error=FALSE)
 ```
 Beautiful coastal boardwalk in Qingdao (My Hometown), China
 
-```{r, echo=FALSE, out.width="70%"}
+```{r, echo=FALSE, out.width="50%"}
 knitr::include_graphics("/img/blogs/Suzhou.jpg",error=FALSE)
 ```
 Pagoda in Suzhou, China
 
-```{r, echo=FALSE, out.width="70%"}
+```{r, echo=FALSE, out.width="50%"}
 knitr::include_graphics("/img/blogs/Tianjin.jpg",error=FALSE)
 ```
 Tianjin, China
 
-```{r, echo=FALSE, out.width="70%"}
+```{r, echo=FALSE, out.width="50%"}
 knitr::include_graphics("/img/blogs/Xian.jpg",error=FALSE)
 ```
 XiAn, a historical city in China
 
-```{r, echo=FALSE, out.width="70%"}
+```{r, echo=FALSE, out.width="50%"}
 knitr::include_graphics("/img/blogs/Nanking.jpg",error=FALSE)
 ```
 
