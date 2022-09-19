@@ -50,6 +50,7 @@ library(data.table)
 
 
 ## Below is a "glimpse" of my recent life
+<p align="center">
 
 ```{r, echo=FALSE, out.width="50%", out.height="50%"}
 knitr::include_graphics("/img/blogs/Chelsea.jpg",error=FALSE)
@@ -116,6 +117,8 @@ Tianjin, China
 knitr::include_graphics("/img/blogs/Xian.jpg",error=FALSE)
 ```
 XiAn, a historical city in China
+
+</p>
 
 ```{r, echo=FALSE, out.width="50%"}
 knitr::include_graphics("/img/blogs/Nanking.jpg",error=FALSE)
